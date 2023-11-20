@@ -40,8 +40,9 @@ def get_ride(ride_id: int):
     return ride.__data__
 
 
-def create_ride(ride: schemas.RideCreate):
-    ride = models.Ride(**ride.dict())
+def create_ride(ride: schemas.RideCreate, user):
+    user_id = user.id
+    ride = models.Ride(**ride.dict(), driver_id=user_id)
     ride.save()
     return ride.__data__
 

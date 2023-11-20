@@ -35,12 +35,12 @@ def read_user(user_id: int):
     return db_user
 
 
-@router.post("/rides/", response_model=schemas.RideCreate, dependencies=[Depends(get_db)])
-def create_ride(ride: schemas.RideCreate):
+@router.post("/rides/", response_model=schemas.RideOut, dependencies=[Depends(get_db)])
+def create_ride(ride: schemas.RideCreate, user: User = Depends(crud.get_current_user)):
     '''
     Эндпоинт для создания поездки
     '''
-    return crud.create_ride(ride)
+    return crud.create_ride(ride, user)
 
 
 @router.get(
@@ -64,8 +64,11 @@ def reserve_ride(ride_id: int, user: User = Depends(crud.get_current_user)):
     return crud.reserve_ride(ride_id, user)
 
 
-@router.post("/confirm_reserve_ride/{ride_id}/{passenger_id}", response_model=schemas.Ride, dependencies=[Depends(get_db)])
-def confirm_reserve_ride(ride_id: int, passenger_id: int):
+@router.post("/confirm_reserve_ride/{ride_id}/{passenger_id}",
+             response_model=schemas.Ride,
+             dependencies=[Depends(get_db)]
+             )
+def confirm_reserve_ride(ride_id: int, passenger_id: int, user: User = Depends(crud.get_current_user)):
     '''
     Эндпоинт подтверждения бронирования поездки водителем
     '''

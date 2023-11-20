@@ -30,9 +30,9 @@ class Ride(peewee.Model):
     status = peewee.CharField(
         verbose_name='Статус',
         choices=STATUS,
-        default=1
+        default=1,
+        constraints=[peewee.Check('status IN (1, 2)')]
     )
-    #TODO добавить валидацию
 
     class Meta:
         database = db

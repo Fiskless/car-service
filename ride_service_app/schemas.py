@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class RideBase(BaseModel):
-    driver_id: int
     price: int
     start_location: str
     end_location: str
@@ -19,8 +18,13 @@ class RideCreate(RideBase):
     pass
 
 
+class RideOut(RideBase):
+    driver_id: int
+
+
 class Ride(RideBase):
     id: int
+    driver_id: int
     passenger_ids: list = []
 
     class Config:
