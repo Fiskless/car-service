@@ -10,7 +10,6 @@ __pycache__/
 .Python
 build/
 media/
-images/
 books/
 develop-eggs/
 dist/
@@ -112,6 +111,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+venv1/
 ENV/
 env.bak/
 venv.bak/
@@ -148,3 +148,4 @@ kubeconfig
 ConfigMap.yaml
 kubernetes_test/
 tracking_old.py
+car_service.db
