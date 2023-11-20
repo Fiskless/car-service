@@ -3,6 +3,7 @@ import database
 import models
 from handlers import router
 
+
 database.db.connect()
 database.db.create_tables([models.User, models.Ride, models.RidePassenger])
 database.db.close()

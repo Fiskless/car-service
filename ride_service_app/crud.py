@@ -1,6 +1,11 @@
 import models
 import schemas
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+import secrets
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+
+security = HTTPBearer()
 
 
 def get_user(user_id: int):
@@ -11,13 +16,19 @@ def get_user_by_username(username: str):
     return models.User.filter(models.User.username == username).first()
 
 
-def create_user(user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
+def get_user_by_token(token: str):
+    return models.User.filter(models.User.token == token).first()
+
+
+def create_user(user: schemas.UserCreate, pwd_context):
+    pwd_hash = pwd_context.hash(user.password)
+    token = secrets.token_hex(32)
     user = models.User(
         username=user.username,
-        password=fake_hashed_password,
+        password=pwd_hash,
         phone=user.phone,
-        email=user.email
+        email=user.email,
+        token=token
     )
     user.save()
     return user
@@ -35,11 +46,12 @@ def create_ride(ride: schemas.RideCreate):
     return ride.__data__
 
 
-def reserve_ride(ride_id: int):
+def reserve_ride(ride_id: int, user):
     ride = get_ride(ride_id)
+    user_id = user.id
     models.RidePassenger.create(
         ride=ride_id,
-        passenger=models.User.filter(models.User.id == 4).first().id
+        passenger=models.User.filter(models.User.id == user_id).first().id
     )
     ride['passenger_ids'] = get_confirmed_passengers_by_ride(ride_id)
     return ride
@@ -78,3 +90,11 @@ def confirm_ride(ride_id: int, passenger_id: int):
 
     ride['passenger_ids'] = get_confirmed_passengers_by_ride(ride_id)
     return ride
+
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    user = get_user_by_token(token=token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Неправильный токен")
+    return user

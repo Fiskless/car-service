@@ -8,6 +8,7 @@ class User(peewee.Model):
     password = peewee.CharField(verbose_name='Фамилия')
     email = peewee.CharField(verbose_name='Почта', null=True)
     phone = peewee.CharField(verbose_name='Телефон')
+    token = peewee.CharField(unique=True)
 
     class Meta:
         database = db

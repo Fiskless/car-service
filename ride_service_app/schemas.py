@@ -45,3 +45,12 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserIn(BaseModel):
+    username: str
+    password: str
+
+
+class UserOut(BaseModel):
+    token: str
